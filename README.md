@@ -12,6 +12,14 @@ Prefix off:
 Prefix on:
 ![prefix_on](screenshots/prefix_on.png)
 
+# Usage
+
+Just add `#{prefix_highlight}` to your left/right status bar.
+
+```tmux.confi
+set -g status-right '#{prefix_highlight} | %a %Y-%m-%d %H:%M'
+```
+
 # Installation with Tmux Plugin Manager (recommended)
 
 Add plugin to the list of TPM plugins:
