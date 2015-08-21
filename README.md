@@ -51,4 +51,4 @@ set -f @prefix_highlight_bg 'blue'
 
 # License
 
-[MIT](lICENSE)
+[MIT](LICENSE)
