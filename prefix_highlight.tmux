@@ -17,7 +17,7 @@ tmux_option() {
     local -r value=$(tmux show-option -gqv "$1")
     local -r default="$2"
 
-	if [ ! -z "$value" ]; then
+    if [ ! -z "$value" ]; then
         echo "$value"
     else
         echo "$default"
