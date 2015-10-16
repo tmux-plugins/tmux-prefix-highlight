@@ -12,7 +12,7 @@ Prefix off:
 Prefix on:
 ![prefix_on](screenshots/prefix_on.png)
 
-# Usage
+### Usage
 
 Just add `#{prefix_highlight}` to your left/right status bar.
 
@@ -20,7 +20,7 @@ Just add `#{prefix_highlight}` to your left/right status bar.
 set -g status-right '#{prefix_highlight} | %a %Y-%m-%d %H:%M'
 ```
 
-# Installation with Tmux Plugin Manager (recommended)
+### Installation with Tmux Plugin Manager (recommended)
 
 Add plugin to the list of TPM plugins:
 
@@ -30,7 +30,7 @@ set -g @plugin 'erickpintor/tmux-prefix-highlight'
 
 Press prefix + I to install it.
 
-# Manual Installation
+### Manual Installation
 
 Clone the repo:
 
@@ -50,13 +50,13 @@ Reload TMUX environment with:
 $ tmux source-file ~/.tmux.conf
 ```
 
-# Configurations
+### Configurations
 
 ```tmux.conf
 set -f @prefix_highlight_fg 'white'
 set -f @prefix_highlight_bg 'blue'
 ```
 
-# License
+### License
 
 [MIT](LICENSE)
