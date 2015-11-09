@@ -53,8 +53,8 @@ $ tmux source-file ~/.tmux.conf
 ### Configurations
 
 ```tmux.conf
-set -f @prefix_highlight_fg 'white'
-set -f @prefix_highlight_bg 'blue'
+set -g @prefix_highlight_fg 'white'
+set -g @prefix_highlight_bg 'blue'
 ```
 
 ### License
