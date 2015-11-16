@@ -27,7 +27,7 @@ tmux_option() {
 highlight() {
     local -r status="$1" prefix="$2" fg_color="$3" bg_color="$4"
     local -r status_value=$(tmux_option "$status")
-    local -r highlight_on_prefix="#[fg=$fg_color,bg=$bg_color]#{?client_prefix, $prefix ,}"
+    local -r highlight_on_prefix="#[fg=$fg_color,bg=$bg_color]#{?client_prefix, $prefix ,}#[fg=default,bg=default]"
 
     tmux set-option -gq "$status" "${status_value/$place_holder/$highlight_on_prefix}"
 }
