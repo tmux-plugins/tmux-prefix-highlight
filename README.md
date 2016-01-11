@@ -41,7 +41,7 @@ $ git clone https://github.com/tmux-plugins/tmux-prefix-highlight.git ~/clone/pa
 Add this line to your .tmux.conf:
 
 ```tmux.conf
-run-shell ~/clone/path/tmux-prefix-highlight.tmux
+run-shell ~/clone/path/prefix_highlight.tmux
 ```
 
 Reload TMUX environment with:
