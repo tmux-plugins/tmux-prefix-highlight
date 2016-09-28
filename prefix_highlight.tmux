@@ -8,9 +8,8 @@ place_holder="\#{prefix_highlight}"
 # Possible configurations
 fg_color_config='@prefix_highlight_fg'
 bg_color_config='@prefix_highlight_bg'
-separator='@prefix_highlight_separator'
-show_separator_before='@prefix_highlight_show_separator_before'
-show_separator_after='@prefix_highlight_show_separator_after'
+output_prefix='@prefix_highlight_output_prefix'
+output_suffix='@prefix_highlight_output_suffix'
 show_copy_config='@prefix_highlight_show_copy_mode'
 copy_attr_config='@prefix_highlight_copy_mode_attr'
 
@@ -37,32 +36,31 @@ highlight() {
         prefix_highlight="$3" \
         show_copy_mode="$4" \
         copy_highlight="$5" \
-        show_separator_before="$6" \
-        show_separator_after="$7" \
-        separator="$8" \
+        output_prefix="$6" \
+        output_suffix="$7"
 
     local -r status_value="$(tmux_option "$status")"
 
-    local prefix_with_optional_separators="$prefix"
-    local copy_with_optional_separators="Copy"
+    local prefix_with_optional_affixes="$prefix"
+    local copy_with_optional_affixes="Copy"
 
-    if [[ "on" = "$show_separator_before" ]]; then
-        local prefix_with_optional_separators="$separator $prefix_with_optional_separators"
-        local copy_with_optional_separators="$separator $copy_with_optional_separators"
+    if [[ "off" != "$output_prefix" ]]; then
+        local prefix_with_optional_affixes="$output_prefix $prefix_with_optional_affixes"
+        local copy_with_optional_affixes="$output_prefix $copy_with_optional_affixes"
     fi
 
-    if [[ "on" = "$show_separator_after" ]]; then
-        local prefix_with_optional_separators="$prefix_with_optional_separators $separator"
-        local copy_with_optional_separators="$copy_with_optional_separators $separator"
+    if [[ "off" != "$output_suffix" ]]; then
+        local prefix_with_optional_affixes="$prefix_with_optional_affixes $output_suffix"
+        local copy_with_optional_affixes="$copy_with_optional_affixes $output_suffix"
     fi
 
     if [[ "on" = "$show_copy_mode" ]]; then
-        local -r fallback="${copy_highlight}#{?pane_in_mode, $copy_with_optional_separators, }"
+        local -r fallback="${copy_highlight}#{?pane_in_mode, $copy_with_optional_affixes, }"
     else
         local -r fallback=""
     fi
 
-    local -r highlight_on_prefix="${prefix_highlight}#{?client_prefix, $prefix_with_optional_separators, $fallback}#[default]"
+    local -r highlight_on_prefix="${prefix_highlight}#{?client_prefix, $prefix_with_optional_affixes, $fallback}#[default]"
     tmux set-option -gq "$status" "${status_value/$place_holder/$highlight_on_prefix}"
 }
 
@@ -72,9 +70,8 @@ main() {
         fg_color=$(tmux_option "$fg_color_config" "$default_fg") \
         bg_color=$(tmux_option "$bg_color_config" "$default_bg") \
         show_copy_mode=$(tmux_option "$show_copy_config" "off") \
-        show_separator_before=$(tmux_option "$show_separator_before" "off") \
-        show_separator_after=$(tmux_option "$show_separator_after" "off") \
-        separator=$(tmux_option "$separator" "|") \
+        output_prefix=$(tmux_option "$output_prefix" "off") \
+        output_suffix=$(tmux_option "$output_suffix" "off") \
         copy_attr=$(tmux_option "$copy_attr_config" "$default_copy_attr")
 
     local -r short_prefix=$(
@@ -90,18 +87,16 @@ main() {
               "$prefix_highlight" \
               "$show_copy_mode" \
               "$copy_highlight" \
-              "$show_separator_before" \
-              "$show_separator_after" \
-              "$separator"
+              "$output_prefix" \
+              "$output_suffix"
 
     highlight "status-left" \
               "$short_prefix" \
               "$prefix_highlight" \
               "$show_copy_mode" \
               "$copy_highlight" \
-              "$show_separator_before" \
-              "$show_separator_after" \
-              "$separator"
+              "$output_prefix" \
+              "$output_suffix"
 }
 
 main
