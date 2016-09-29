@@ -77,8 +77,8 @@ value contained in `#{prefix_highlight}`.
 (e.g. `< ^B >`)
 
 ```tmux.conf
-set -g @prefix_highlight_output_prefix '<'
-set -g @prefix_highlight_output_suffix '>'
+set -g @prefix_highlight_output_prefix '< '
+set -g @prefix_highlight_output_suffix ' >'
 ```
 
 ### License

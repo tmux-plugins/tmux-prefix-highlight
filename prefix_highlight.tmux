@@ -37,30 +37,20 @@ highlight() {
         show_copy_mode="$4" \
         copy_highlight="$5" \
         output_prefix="$6" \
-        output_suffix="$7"
+        output_suffix="$7" \
+        copy="Copy"
 
     local -r status_value="$(tmux_option "$status")"
-
-    local prefix_with_optional_affixes="$prefix"
-    local copy_with_optional_affixes="Copy"
-
-    if [[ "off" != "$output_prefix" ]]; then
-        local prefix_with_optional_affixes="$output_prefix $prefix_with_optional_affixes"
-        local copy_with_optional_affixes="$output_prefix $copy_with_optional_affixes"
-    fi
-
-    if [[ "off" != "$output_suffix" ]]; then
-        local prefix_with_optional_affixes="$prefix_with_optional_affixes $output_suffix"
-        local copy_with_optional_affixes="$copy_with_optional_affixes $output_suffix"
-    fi
+    local -r prefix_with_optional_affixes="$output_prefix$prefix$output_suffix"
+    local -r copy_with_optional_affixes="$output_prefix$copy$output_suffix"
 
     if [[ "on" = "$show_copy_mode" ]]; then
-        local -r fallback="${copy_highlight}#{?pane_in_mode, $copy_with_optional_affixes, }"
+        local -r fallback="${copy_highlight}#{?pane_in_mode,$copy_with_optional_affixes,}"
     else
         local -r fallback=""
     fi
 
-    local -r highlight_on_prefix="${prefix_highlight}#{?client_prefix, $prefix_with_optional_affixes, $fallback}#[default]"
+    local -r highlight_on_prefix="${prefix_highlight}#{?client_prefix,$prefix_with_optional_affixes,$fallback}#[default]"
     tmux set-option -gq "$status" "${status_value/$place_holder/$highlight_on_prefix}"
 }
 
@@ -70,8 +60,8 @@ main() {
         fg_color=$(tmux_option "$fg_color_config" "$default_fg") \
         bg_color=$(tmux_option "$bg_color_config" "$default_bg") \
         show_copy_mode=$(tmux_option "$show_copy_config" "off") \
-        output_prefix=$(tmux_option "$output_prefix" "off") \
-        output_suffix=$(tmux_option "$output_suffix" "off") \
+        output_prefix=$(tmux_option "$output_prefix" " ") \
+        output_suffix=$(tmux_option "$output_suffix" " ") \
         copy_attr=$(tmux_option "$copy_attr_config" "$default_copy_attr")
 
     local -r short_prefix=$(
