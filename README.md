@@ -1,6 +1,6 @@
 # Tmux prefix highlight
 
-Plugin that highlights when you press tmux prefix key. Inspired by 
+Plugin that highlights when you press tmux prefix key. Inspired by
 [this](http://stackoverflow.com/questions/12003726/give-a-hint-when-press-prefix-key-in-tmux)
 thread on stackoverflow.
 
@@ -70,6 +70,15 @@ comma-separated list of colors and attributes:
 ```tmux.conf
 set -g @prefix_highlight_show_copy_mode 'on'
 set -g @prefix_highlight_copy_mode_attr 'fg=black,bg=yellow,bold' # default is 'fg=default,bg=yellow'
+```
+
+Additionally, the plugin can be configured to attach optional affixes to the
+value contained in `#{prefix_highlight}`.
+(e.g. `< ^B >`)
+
+```tmux.conf
+set -g @prefix_highlight_output_prefix '< '
+set -g @prefix_highlight_output_suffix ' >'
 ```
 
 ### License
