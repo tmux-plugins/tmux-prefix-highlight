@@ -12,11 +12,8 @@ output_prefix='@prefix_highlight_output_prefix'
 output_suffix='@prefix_highlight_output_suffix'
 show_copy_config='@prefix_highlight_show_copy_mode'
 copy_attr_config='@prefix_highlight_copy_mode_attr'
-
-# Defaults
-default_fg='colour231'
-default_bg='colour04'
-default_copy_attr='fg=default,bg=yellow'
+prefix_prompt='@prefix_highlight_prefix_prompt'
+copy_prompt='@prefix_highlight_copy_prompt'
 
 tmux_option() {
     local -r value=$(tmux show-option -gqv "$1")
@@ -29,6 +26,13 @@ tmux_option() {
     fi
 }
 
+# Defaults
+default_fg='colour231'
+default_bg='colour04'
+default_copy_attr='fg=default,bg=yellow'
+default_prefix_prompt=$(tmux_option prefix | tr "[:lower:]" "[:upper:]" | sed 's/C-/\^/')
+default_copy_prompt='Copy'
+
 highlight() {
     local -r \
         status="$1" \
@@ -38,7 +42,7 @@ highlight() {
         copy_highlight="$5" \
         output_prefix="$6" \
         output_suffix="$7" \
-        copy="Copy"
+        copy="$8"
 
     local -r status_value="$(tmux_option "$status")"
     local -r prefix_with_optional_affixes="$output_prefix$prefix$output_suffix"
@@ -56,37 +60,36 @@ highlight() {
 
 main() {
     local -r \
-        prefix=$(tmux_option prefix) \
         fg_color=$(tmux_option "$fg_color_config" "$default_fg") \
         bg_color=$(tmux_option "$bg_color_config" "$default_bg") \
         show_copy_mode=$(tmux_option "$show_copy_config" "off") \
         output_prefix=$(tmux_option "$output_prefix" " ") \
         output_suffix=$(tmux_option "$output_suffix" " ") \
-        copy_attr=$(tmux_option "$copy_attr_config" "$default_copy_attr")
-
-    local -r short_prefix=$(
-        echo "$prefix" | tr "[:lower:]" "[:upper:]" | sed 's/C-/\^/'
-    )
+        copy_attr=$(tmux_option "$copy_attr_config" "$default_copy_attr") \
+        prefix_prompt=$(tmux_option "$prefix_prompt" "$default_prefix_prompt") \
+        copy_prompt=$(tmux_option "$copy_prompt" "$default_copy_prompt")
 
     local -r \
         prefix_highlight="#[fg=$fg_color,bg=$bg_color]" \
         copy_highlight="${copy_attr:+#[default,$copy_attr]}"
 
     highlight "status-right" \
-              "$short_prefix" \
+              "$prefix_prompt" \
               "$prefix_highlight" \
               "$show_copy_mode" \
               "$copy_highlight" \
               "$output_prefix" \
-              "$output_suffix"
+              "$output_suffix" \
+              "$copy_prompt"
 
     highlight "status-left" \
-              "$short_prefix" \
+              "$prefix_prompt" \
               "$prefix_highlight" \
               "$show_copy_mode" \
               "$copy_highlight" \
               "$output_prefix" \
-              "$output_suffix"
+              "$output_suffix" \
+              "$copy_prompt"
 }
 
 main
