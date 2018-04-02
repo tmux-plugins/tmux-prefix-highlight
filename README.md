@@ -72,6 +72,13 @@ set -g @prefix_highlight_show_copy_mode 'on'
 set -g @prefix_highlight_copy_mode_attr 'fg=black,bg=yellow,bold' # default is 'fg=default,bg=yellow'
 ```
 
+The `prefix` prompt and `copy` prompt can also be configured:
+
+```tmux.conf
+set -g @prefix_highlight_prefix_prompt 'Wait'
+set -g @prefix_highlight_copy_prompt 'Copy'
+```
+
 Additionally, the plugin can be configured to attach optional affixes to the
 value contained in `#{prefix_highlight}`.
 (e.g. `< ^B >`)
