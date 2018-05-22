@@ -16,7 +16,7 @@ Prefix on:
 
 Just add `#{prefix_highlight}` to your left/right status bar.
 
-```tmux.confi
+```tmux.conf
 set -g status-right '#{prefix_highlight} | %a %Y-%m-%d %H:%M'
 ```
 
