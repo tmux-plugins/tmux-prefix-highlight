@@ -88,6 +88,24 @@ set -g @prefix_highlight_output_prefix '< '
 set -g @prefix_highlight_output_suffix ' >'
 ```
 
+The empty (shown when prefix is off) prompt and attribute can be configured,
+It is useful for aligning segments.
+
+```tmux.conf
+set -g @prefix_highlight_empty_prompt '        '          # default is '' (empty char)
+set -g @prefix_highlight_empty_attr 'fg=default,bg=green' # default is 'fg=default,bg=default'
+```
+
+Defaultly, empty prompt can't be attached optional affixes.
+If you want attach affixes on empty prompt, config `@prefix_highlight_empty_has_affixes` to `on`.
+
+```tmux.conf
+set -g @prefix_highlight_empty_has_affixes 'on' # default is 'off'
+set -g @prefix_highlight_empty_prompt 'Tmux'
+set -g @prefix_highlight_output_prefix '< '
+set -g @prefix_highlight_output_suffix ' >'
+```
+
 ### License
 
 [MIT](LICENSE)

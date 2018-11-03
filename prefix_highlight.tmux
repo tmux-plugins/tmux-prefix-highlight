@@ -14,6 +14,9 @@ show_copy_config='@prefix_highlight_show_copy_mode'
 copy_attr_config='@prefix_highlight_copy_mode_attr'
 prefix_prompt='@prefix_highlight_prefix_prompt'
 copy_prompt='@prefix_highlight_copy_prompt'
+empty_prompt='@prefix_highlight_empty_prompt'
+empty_attr_config='@prefix_highlight_empty_attr'
+empty_has_affixes='@prefix_highlight_empty_has_affixes'
 
 tmux_option() {
     local -r value=$(tmux show-option -gqv "$1")
@@ -30,8 +33,10 @@ tmux_option() {
 default_fg='colour231'
 default_bg='colour04'
 default_copy_attr='fg=default,bg=yellow'
+default_empty_attr='fg=default,bg=default'
 default_prefix_prompt=$(tmux_option prefix | tr "[:lower:]" "[:upper:]" | sed 's/C-/\^/')
 default_copy_prompt='Copy'
+default_empty_prompt=''
 
 highlight() {
     local -r \
@@ -42,16 +47,23 @@ highlight() {
         copy_highlight="$5" \
         output_prefix="$6" \
         output_suffix="$7" \
-        copy="$8"
+        copy="$8" \
+        empty="$9"
 
     local -r status_value="$(tmux_option "$status")"
     local -r prefix_with_optional_affixes="$output_prefix$prefix$output_suffix"
     local -r copy_with_optional_affixes="$output_prefix$copy$output_suffix"
 
-    if [[ "on" = "$show_copy_mode" ]]; then
-        local -r fallback="${copy_highlight}#{?pane_in_mode,$copy_with_optional_affixes,}"
+    if [[ "on" = "$empty_has_affixes" ]]; then
+        local -r empty_with_optional_affixes="$output_prefix$empty$output_suffix"
     else
-        local -r fallback=""
+        local -r empty_with_optional_affixes="$empty"
+    fi
+
+    if [[ "on" = "$show_copy_mode" ]]; then
+        local -r fallback="${copy_highlight}#{?pane_in_mode,$copy_with_optional_affixes,${empty_highlight}$empty_with_optional_affixes}"
+    else
+        local -r fallback="${empty_highlight}$empty_with_optional_affixes"
     fi
 
     local -r highlight_on_prefix="${prefix_highlight}#{?client_prefix,$prefix_with_optional_affixes,$fallback}#[default]"
@@ -67,11 +79,15 @@ main() {
         output_suffix=$(tmux_option "$output_suffix" " ") \
         copy_attr=$(tmux_option "$copy_attr_config" "$default_copy_attr") \
         prefix_prompt=$(tmux_option "$prefix_prompt" "$default_prefix_prompt") \
-        copy_prompt=$(tmux_option "$copy_prompt" "$default_copy_prompt")
+        copy_prompt=$(tmux_option "$copy_prompt" "$default_copy_prompt") \
+        empty_prompt=$(tmux_option "$empty_prompt" "$default_empty_prompt") \
+        empty_attr=$(tmux_option "$empty_attr_config" "$default_empty_attr") \
+        empty_has_affixes=$(tmux_option "$empty_has_affixes" "off")
 
     local -r \
         prefix_highlight="#[fg=$fg_color,bg=$bg_color]" \
-        copy_highlight="${copy_attr:+#[default,$copy_attr]}"
+        copy_highlight="${copy_attr:+#[default,$copy_attr]}" \
+        empty_highlight="${empty_attr:+#[default,$empty_attr]}"
 
     highlight "status-right" \
               "$prefix_prompt" \
@@ -80,7 +96,10 @@ main() {
               "$copy_highlight" \
               "$output_prefix" \
               "$output_suffix" \
-              "$copy_prompt"
+              "$copy_prompt" \
+              "$empty_prompt" \
+              "$empty_highlight" \
+              "$empty_has_affixes"
 
     highlight "status-left" \
               "$prefix_prompt" \
@@ -89,7 +108,10 @@ main() {
               "$copy_highlight" \
               "$output_prefix" \
               "$output_suffix" \
-              "$copy_prompt"
+              "$copy_prompt" \
+              "$empty_prompt" \
+              "$empty_highlight" \
+              "$empty_has_affixes"
 }
 
 main
