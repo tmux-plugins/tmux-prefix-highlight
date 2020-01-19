@@ -62,21 +62,25 @@ set -g @prefix_highlight_fg 'white' # default is 'colour231'
 set -g @prefix_highlight_bg 'blue'  # default is 'colour04'
 ```
 
-The plugin can also be configured to show when copy mode is active. If enabled,
-the `#{prefix_highlight}` token will be replaced with the string `Copy` when
-copy mode is enabled. The style for copy mode can be configured as a
-comma-separated list of colors and attributes:
+The plugin can also be configured to show when copy or synchronized panes mode
+is active. If enabled, the `#{prefix_highlight}` token will be replaced with
+the string `Copy` when copy mode is enabled and `Sync` for synchronized panes.
+The style for copy and sync mode can be configured as a comma-separated list of
+colors and attributes:
 
 ```tmux.conf
 set -g @prefix_highlight_show_copy_mode 'on'
 set -g @prefix_highlight_copy_mode_attr 'fg=black,bg=yellow,bold' # default is 'fg=default,bg=yellow'
+set -g @prefix_highlight_show_sync_mode 'on'
+set -g @prefix_highlight_sync_mode_attr 'fg=black,bg=green' # default is 'fg=default,bg=yellow'
 ```
 
-The `prefix` prompt and `copy` prompt can also be configured:
+The `prefix`, `copy` and `sync` prompts can also be configured:
 
 ```tmux.conf
 set -g @prefix_highlight_prefix_prompt 'Wait'
 set -g @prefix_highlight_copy_prompt 'Copy'
+set -g @prefix_highlight_sync_prompt 'Sync'
 ```
 
 Additionally, the plugin can be configured to attach optional affixes to the
