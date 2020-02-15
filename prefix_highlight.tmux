@@ -11,9 +11,12 @@ bg_color_config='@prefix_highlight_bg'
 output_prefix='@prefix_highlight_output_prefix'
 output_suffix='@prefix_highlight_output_suffix'
 show_copy_config='@prefix_highlight_show_copy_mode'
+show_sync_config='@prefix_highlight_show_sync_mode'
 copy_attr_config='@prefix_highlight_copy_mode_attr'
+sync_attr_config='@prefix_highlight_sync_attr'
 prefix_prompt='@prefix_highlight_prefix_prompt'
 copy_prompt='@prefix_highlight_copy_prompt'
+sync_prompt='@prefix_highlight_sync_prompt'
 empty_prompt='@prefix_highlight_empty_prompt'
 empty_attr_config='@prefix_highlight_empty_attr'
 empty_has_affixes='@prefix_highlight_empty_has_affixes'
@@ -22,7 +25,7 @@ tmux_option() {
     local -r value=$(tmux show-option -gqv "$1")
     local -r default="$2"
 
-    if [ ! -z "$value" ]; then
+    if [ -n "$value" ]; then
         echo "$value"
     else
         echo "$default"
@@ -33,9 +36,11 @@ tmux_option() {
 default_fg='colour231'
 default_bg='colour04'
 default_copy_attr='fg=default,bg=yellow'
+default_sync_attr='fg=default,bg=yellow'
 default_empty_attr='fg=default,bg=default'
 default_prefix_prompt=$(tmux_option prefix | tr "[:lower:]" "[:upper:]" | sed 's/C-/\^/')
 default_copy_prompt='Copy'
+default_sync_prompt='Sync'
 default_empty_prompt=''
 
 highlight() {
@@ -44,15 +49,19 @@ highlight() {
         prefix="$2" \
         prefix_highlight="$3" \
         show_copy_mode="$4" \
-        copy_highlight="$5" \
-        output_prefix="$6" \
-        output_suffix="$7" \
-        copy="$8" \
-        empty="$9"
+        show_sync_mode="$5" \
+        copy_highlight="$6" \
+        sync_highlight="$7" \
+        output_prefix="$8" \
+        output_suffix="$9" \
+        copy="${10}" \
+        sync="${11}" \
+        empty="${12}"
 
     local -r status_value="$(tmux_option "$status")"
     local -r prefix_with_optional_affixes="$output_prefix$prefix$output_suffix"
     local -r copy_with_optional_affixes="$output_prefix$copy$output_suffix"
+    local -r sync_with_optional_affixes="$output_prefix$sync$output_suffix"
 
     if [[ "on" = "$empty_has_affixes" ]]; then
         local -r empty_with_optional_affixes="$output_prefix$empty$output_suffix"
@@ -61,12 +70,17 @@ highlight() {
     fi
 
     if [[ "on" = "$show_copy_mode" ]]; then
-        local -r fallback="${copy_highlight}#{?pane_in_mode,$copy_with_optional_affixes,${empty_highlight}$empty_with_optional_affixes}"
-    else
-        local -r fallback="${empty_highlight}$empty_with_optional_affixes"
+        local -r copy_mode="${copy_highlight}#{?pane_in_mode,$copy_with_optional_affixes,}"
     fi
 
-    local -r highlight_on_prefix="${prefix_highlight}#{?client_prefix,$prefix_with_optional_affixes,$fallback}#[default]"
+    if [[ "on" = "$show_sync_mode" ]]; then
+        local -r sync_panes="${sync_highlight}#{?synchronize-panes,$sync_with_optional_affixes,}"
+    fi
+
+    local -r extended_highlights="${copy_mode}${sync_panes}"
+    local -r client_prefix="#{?client_prefix,$prefix_with_optional_affixes,$empty_with_optional_affixes}"
+
+    local -r highlight_on_prefix="${prefix_highlight}${client_prefix}${extended_highlights}#[default]"
     tmux set-option -gq "$status" "${status_value/$place_holder/$highlight_on_prefix}"
 }
 
@@ -75,11 +89,14 @@ main() {
         fg_color=$(tmux_option "$fg_color_config" "$default_fg") \
         bg_color=$(tmux_option "$bg_color_config" "$default_bg") \
         show_copy_mode=$(tmux_option "$show_copy_config" "off") \
+        show_sync_mode=$(tmux_option "$show_sync_config" "off") \
         output_prefix=$(tmux_option "$output_prefix" " ") \
         output_suffix=$(tmux_option "$output_suffix" " ") \
         copy_attr=$(tmux_option "$copy_attr_config" "$default_copy_attr") \
+        sync_attr=$(tmux_option "$sync_attr_config" "$default_sync_attr") \
         prefix_prompt=$(tmux_option "$prefix_prompt" "$default_prefix_prompt") \
         copy_prompt=$(tmux_option "$copy_prompt" "$default_copy_prompt") \
+        sync_prompt=$(tmux_option "$sync_prompt" "$default_sync_prompt") \
         empty_prompt=$(tmux_option "$empty_prompt" "$default_empty_prompt") \
         empty_attr=$(tmux_option "$empty_attr_config" "$default_empty_attr") \
         empty_has_affixes=$(tmux_option "$empty_has_affixes" "off")
@@ -87,16 +104,20 @@ main() {
     local -r \
         prefix_highlight="#[fg=$fg_color,bg=$bg_color]" \
         copy_highlight="${copy_attr:+#[default,$copy_attr]}" \
+        sync_highlight="${sync_attr:+#[default,$sync_attr]}" \
         empty_highlight="${empty_attr:+#[default,$empty_attr]}"
 
     highlight "status-right" \
               "$prefix_prompt" \
               "$prefix_highlight" \
               "$show_copy_mode" \
+              "$show_sync_mode" \
               "$copy_highlight" \
+              "$sync_highlight" \
               "$output_prefix" \
               "$output_suffix" \
               "$copy_prompt" \
+              "$sync_prompt" \
               "$empty_prompt" \
               "$empty_highlight" \
               "$empty_has_affixes"
@@ -105,10 +126,13 @@ main() {
               "$prefix_prompt" \
               "$prefix_highlight" \
               "$show_copy_mode" \
+              "$show_sync_mode" \
               "$copy_highlight" \
+              "$sync_highlight" \
               "$output_prefix" \
               "$output_suffix" \
               "$copy_prompt" \
+              "$sync_prompt" \
               "$empty_prompt" \
               "$empty_highlight" \
               "$empty_has_affixes"
