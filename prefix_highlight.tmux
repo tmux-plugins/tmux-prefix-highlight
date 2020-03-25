@@ -32,6 +32,11 @@ tmux_option() {
     fi
 }
 
+escape_symbols() {
+    local -r string="$1"
+    echo "$string" | sed -e 's/,/#,/g' -e 's/}/#}/g'
+}
+
 # Defaults
 default_fg='colour231'
 default_bg='colour04'
@@ -46,41 +51,44 @@ default_empty_prompt=''
 highlight() {
     local -r \
         status="$1" \
-        prefix="$2" \
-        prefix_highlight="$3" \
+        prefix="$(escape_symbols "$2")" \
+        prefix_highlight="$(escape_symbols "$3")" \
         show_copy_mode="$4" \
         show_sync_mode="$5" \
-        copy_highlight="$6" \
-        sync_highlight="$7" \
-        output_prefix="$8" \
-        output_suffix="$9" \
-        copy="${10}" \
-        sync="${11}" \
-        empty="${12}"
+        copy_highlight="$(escape_symbols "$6")" \
+        sync_highlight="$(escape_symbols "$7")" \
+        output_prefix="$(escape_symbols "$8")" \
+        output_suffix="$(escape_symbols "$9")" \
+        copy="$(escape_symbols "${10}")" \
+        sync="$(escape_symbols "${11}")" \
+        empty="$(escape_symbols "${12}")"
 
     local -r status_value="$(tmux_option "$status")"
-    local -r prefix_with_optional_affixes="$output_prefix$prefix$output_suffix"
-    local -r copy_with_optional_affixes="$output_prefix$copy$output_suffix"
-    local -r sync_with_optional_affixes="$output_prefix$sync$output_suffix"
+    local -r prefix_with_optional_affixes="$prefix_highlight$output_prefix$prefix$output_suffix"
+    local -r copy_with_optional_affixes="$copy_highlight$output_prefix$copy$output_suffix"
+    local -r sync_with_optional_affixes="$sync_highlight$output_prefix$sync$output_suffix"
 
     if [[ "on" = "$empty_has_affixes" ]]; then
-        local -r empty_with_optional_affixes="$output_prefix$empty$output_suffix"
+        local -r empty_with_optional_affixes="$empty_highlight$output_prefix$empty$output_suffix"
     else
-        local -r empty_with_optional_affixes="$empty"
+        local -r empty_with_optional_affixes="$empty_highlight$empty"
     fi
 
     if [[ "on" = "$show_copy_mode" ]]; then
-        local -r copy_mode="${copy_highlight}#{?pane_in_mode,$copy_with_optional_affixes,}"
+        if [[ "on" = "$show_sync_mode" ]]; then
+            local -r fallback="#{?pane_in_mode,$copy_with_optional_affixes,#{?synchronize-panes,$sync_with_optional_affixes,$empty_with_optional_affixes}}"
+        else
+            local -r fallback="#{?pane_in_mode,$copy_with_optional_affixes,$empty_with_optional_affixes}"
+        fi
+    else
+        if [[ "on" = "$show_sync_mode" ]]; then
+            local -r fallback="#{?synchronize-panes,$sync_with_optional_affixes,$empty_with_optional_affixes}"
+        else
+            local -r fallback="$empty_with_optional_affixes"
+        fi
     fi
 
-    if [[ "on" = "$show_sync_mode" ]]; then
-        local -r sync_panes="${sync_highlight}#{?synchronize-panes,$sync_with_optional_affixes,}"
-    fi
-
-    local -r extended_highlights="${copy_mode}${sync_panes}"
-    local -r client_prefix="#{?client_prefix,$prefix_with_optional_affixes,${empty_highlight}$empty_with_optional_affixes}"
-
-    local -r highlight_on_prefix="${prefix_highlight}${client_prefix}${extended_highlights}#[default]"
+    local -r highlight_on_prefix="#{?client_prefix,$prefix_with_optional_affixes,$fallback}#[default]"
     tmux set-option -gq "$status" "${status_value/$place_holder/$highlight_on_prefix}"
 }
 
