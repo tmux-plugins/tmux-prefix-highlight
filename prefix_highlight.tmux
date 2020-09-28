@@ -64,7 +64,7 @@ main() {
         empty_attr=$(tmux_option "$empty_attr_config" "$default_empty_attr") \
         empty_has_affixes=$(tmux_option "$empty_has_affixes" "off")
 
-    local -r prefix_highlight="#[fg=$fg_color]#[bg=$bg_color]"
+    local -r prefix_highlight="$(format_style "fg=$fg_color,bg=$bg_color")"
     local -r prefix_mode="$prefix_highlight$output_prefix$prefix_prompt$output_suffix"
 
     local -r copy_highlight="$(format_style "${copy_attr:+default,$copy_attr}")"
