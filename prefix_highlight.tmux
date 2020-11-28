@@ -22,7 +22,7 @@ empty_attr_config='@prefix_highlight_empty_attr'
 empty_has_affixes='@prefix_highlight_empty_has_affixes'
 
 tmux_option() {
-    local -r value=$(tmux show-option -gqv "$1")
+    local -r value=$(tmux show-option -Aqv "$1")
     local -r default="$2"
 
     if [ -n "$value" ]; then
@@ -95,10 +95,10 @@ main() {
     local -r highlight="#{?client_prefix,$prefix_mode,$fallback}#[default]"
 
     local -r status_left_value="$(tmux_option "status-left")"
-    tmux set-option -gq "status-left" "${status_left_value/$place_holder/$highlight}"
+    tmux set-option -sq "status-left" "${status_left_value/$place_holder/$highlight}"
 
     local -r status_right_value="$(tmux_option "status-right")"
-    tmux set-option -gq "status-right" "${status_right_value/$place_holder/$highlight}"
+    tmux set-option -sq "status-right" "${status_right_value/$place_holder/$highlight}"
 }
 
 main
