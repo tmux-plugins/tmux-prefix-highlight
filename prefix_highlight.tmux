@@ -6,6 +6,7 @@ set -e
 place_holder="\#{prefix_highlight}"
 
 # Possible configurations
+option_scope_config='@prefix_highlight_option_scope'
 fg_color_config='@prefix_highlight_fg'
 bg_color_config='@prefix_highlight_bg'
 output_prefix='@prefix_highlight_output_prefix'
@@ -36,6 +37,14 @@ format_style() {
     echo "#[${1}]" | sed -e 's/,/]#[/g'
 }
 
+interpolate() {
+    local -r option=$1
+    local -r replacement=$2
+    local -r option_scope=${3#-}
+    local -r option_value=$(tmux_option "$option")
+    tmux set-option -"$option_scope"q "$option" "${option_value/$place_holder/$replacement}"
+}
+
 # Defaults
 default_fg='colour231'
 default_bg='colour04'
@@ -49,6 +58,7 @@ default_empty_prompt=''
 
 main() {
     local -r \
+        option_scope=$(tmux_option "$option_scope_config" "g") \
         fg_color=$(tmux_option "$fg_color_config" "$default_fg") \
         bg_color=$(tmux_option "$bg_color_config" "$default_bg") \
         show_copy_mode=$(tmux_option "$show_copy_config" "off") \
@@ -94,11 +104,9 @@ main() {
 
     local -r highlight="#{?client_prefix,$prefix_mode,$fallback}#[default]"
 
-    local -r status_left_value="$(tmux_option "status-left")"
-    tmux set-option -sq "status-left" "${status_left_value/$place_holder/$highlight}"
+    interpolate "status-left" "$highlight" "$option_scope"
 
-    local -r status_right_value="$(tmux_option "status-right")"
-    tmux set-option -sq "status-right" "${status_right_value/$place_holder/$highlight}"
+    interpolate "status-right" "$highlight" "$option_scope"
 }
 
 main
