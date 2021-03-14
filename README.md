@@ -1,5 +1,11 @@
 # Tmux prefix highlight
 
+**NOTE:** This project is no longer in active development. Bugs and 
+features requests won't get implemented by the project maintainers.
+We still welcome discussions and community pull requests, though.
+
+---
+
 Plugin that highlights when you press tmux prefix key. Inspired by
 [this](http://stackoverflow.com/questions/12003726/give-a-hint-when-press-prefix-key-in-tmux)
 thread on stackoverflow.
