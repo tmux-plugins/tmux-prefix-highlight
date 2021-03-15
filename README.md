@@ -116,6 +116,16 @@ set -g @prefix_highlight_output_prefix '< '
 set -g @prefix_highlight_output_suffix ' >'
 ```
 
+#### Change option scope (default g - global)
+
+Follows same rules as `set-option`
+
+**Special case**: To set scope to session use `'-'`, because by default session scope used when no param is provided.
+
+```tmux.conf
+set -g @prefix_highlight_option_scope '-'
+```
+
 ### License
 
 [MIT](LICENSE)
