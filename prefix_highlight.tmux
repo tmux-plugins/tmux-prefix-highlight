@@ -94,11 +94,12 @@ main() {
 
     local -r highlight="#{?client_prefix,$prefix_mode,$fallback}#[default]"
 
-    local -r status_left_value="$(tmux_option "status-left")"
-    tmux set-option -gq "status-left" "${status_left_value/$place_holder/$highlight}"
-
-    local -r status_right_value="$(tmux_option "status-right")"
-    tmux set-option -gq "status-right" "${status_right_value/$place_holder/$highlight}"
+    local interpolated_options="$(tmux_option "@plugin_interpolated_options" "status-right status-left")"
+    for interpolated_option in $interpolated_options
+    do
+        local -r option_value="$(tmux_option $interpolated_option)"
+        tmux set-option -gq $interpolated_option "${option_value/$place_holder/$highlight}"
+    done
 }
 
 main
