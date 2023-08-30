@@ -95,10 +95,10 @@ main() {
     local -r highlight="#{?client_prefix,$prefix_mode,$fallback}#[default]"
 
     local -r status_left_value="$(tmux_option "status-left")"
-    tmux set-option -gq "status-left" "${status_left_value/$place_holder/$highlight}"
+    tmux set-option -gq "status-left" "${status_left_value//$place_holder/$highlight}"
 
     local -r status_right_value="$(tmux_option "status-right")"
-    tmux set-option -gq "status-right" "${status_right_value/$place_holder/$highlight}"
+    tmux set-option -gq "status-right" "${status_right_value//$place_holder/$highlight}"
 }
 
 main
