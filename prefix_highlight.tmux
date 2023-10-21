@@ -70,7 +70,7 @@ main() {
     # add support for all (known) pane modes
     local -r pane_mode="#{s/-mode//:#{pane_mode}}"
     local -r clock_mode_sub="#{#{?#{==:$pane_mode,clock},clck,#{pane_mode} is not yet supported; please report}}"
-    local -r options_mode_sub="#{#{?#{==:$pane_mode,options},opts,$clock_mode_sub}}"
+    local -r options_mode_sub="#{#{?#{==:$pane_mode,options},Opts,$clock_mode_sub}}"
     local -r client_mode_sub="#{#{?#{==:$pane_mode,client},Clnt,$options_mode_sub}}"
     local -r buffer_mode_sub="#{#{?#{==:$pane_mode,buffer},Bufr,$client_mode_sub}}"
     local -r tree_mode_sub="#{#{?#{==:$pane_mode,tree},Tree,$buffer_mode_sub}}"
