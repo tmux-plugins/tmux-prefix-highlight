@@ -75,7 +75,7 @@ main() {
     local -r buffer_mode_sub="#{#{?#{==:$pane_mode,buffer},Bufr,$client_mode_sub}}"
     local -r tree_mode_sub="#{#{?#{==:$pane_mode,tree},Tree,$buffer_mode_sub}}"
     local -r view_mode_sub="#{#{?#{==:$pane_mode,view},View,$tree_mode_sub}}"
-    local -r copy_mode_sub="#{#{?#{==:$pane_mode,copy},Copy,$view_mode_sub}}"
+    local -r copy_mode_sub="#{#{?#{==:$pane_mode,copy},$copy_prompt,$view_mode_sub}}"
 
     local -r copy_highlight="$(format_style "${copy_attr:+default,$copy_attr}")"
     local -r copy_mode="$copy_highlight$output_prefix$copy_mode_sub$output_suffix"
