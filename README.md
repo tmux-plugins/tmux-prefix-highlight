@@ -4,6 +4,11 @@
 features requests won't get implemented by the project maintainers.
 We still welcome discussions and community pull requests, though.
 
+**Looking for Maintainer**: I haven't been using TMUX for a while now 
+and I feel like I'm not serving the comunity well by being the 
+maintainer of this plugin. If you're interested in maintaning this 
+plugin, please reach out.
+
 ---
 
 Plugin that highlights when you press tmux prefix key. Inspired by
