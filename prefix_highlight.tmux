@@ -99,6 +99,13 @@ main() {
 
     local -r status_right_value="$(tmux_option "status-right")"
     tmux set-option -gq "status-right" "${status_right_value//$place_holder/$highlight}"
+
+    local -r status_format_0_value="$(tmux_option "status-format[0]")"
+    tmux set-option -gq "status-format[0]" "${status_format_0_value//$place_holder/$highlight}"
+
+    local -r status_format_1_value="$(tmux_option "status-format[1]")"
+    tmux set-option -gq "status-format[1]" "${status_format_1_value//$place_holder/$highlight}"
+
 }
 
 main
